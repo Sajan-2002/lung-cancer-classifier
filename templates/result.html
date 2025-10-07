@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction Results - Lung Cancer Prediction System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-image"></i> Uploaded Image</h5>
+            </div>
+            <div class="card-body text-center">
+                <img src="data:image/png;base64,{{ img_data }}" 
+                     alt="Uploaded Image" 
+                     class="img-fluid rounded shadow-sm" 
+                     style="max-height: 400px;">
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-microscope"></i> Prediction Results</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    {% if predicted_label == 'normal' %}
+                        <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+                        <h4 class="text-success">Normal Tissue</h4>
+                    {% elif predicted_label == 'adenocarcinoma' %}
+                        <i class="fas fa-exclamation-triangle fa-4x text-warning mb-3"></i>
+                        <h4 class="text-warning">Adenocarcinoma</h4>
+                    {% elif predicted_label == 'large.cell.carcinoma' %}
+                        <i class="fas fa-exclamation-circle fa-4x text-danger mb-3"></i>
+                        <h4 class="text-danger">Large Cell Carcinoma</h4>
+                    {% else %}
+                        <i class="fas fa-exclamation-circle fa-4x text-info mb-3"></i>
+                        <h4 class="text-info">Squamous Cell Carcinoma</h4>
+                    {% endif %}
+                    
+                    <div class="progress mb-3" style="height: 25px;">
+                        <div class="progress-bar 
+                            {% if predicted_label == 'normal' %}bg-success
+                            {% elif predicted_label == 'adenocarcinoma' %}bg-warning
+                            {% elif predicted_label == 'large.cell.carcinoma' %}bg-danger
+                            {% else %}bg-info{% endif %}" 
+                             role="progressbar" 
+                             style="width: {{ (confidence * 100)|round(1) }}%">
+                            {{ (confidence * 100)|round(1) }}% Confidence
+                        </div>
+                    </div>
+                </div>
+                
+                <h6><i class="fas fa-chart-bar"></i> All Predictions:</h6>
+                <div class="list-group">
+                    {% for class_name, probability in all_predictions.items() %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>
+                            {% if class_name == 'normal' %}
+                                <i class="fas fa-circle text-success"></i> Normal Tissue
+                            {% elif class_name == 'adenocarcinoma' %}
+                                <i class="fas fa-circle text-warning"></i> Adenocarcinoma
+                            {% elif class_name == 'large.cell.carcinoma' %}
+                                <i class="fas fa-circle text-danger"></i> Large Cell Carcinoma
+                            {% else %}
+                                <i class="fas fa-circle text-info"></i> Squamous Cell Carcinoma
+                            {% endif %}
+                        </span>
+                        <span class="badge 
+                            {% if class_name == predicted_label %}
+                                {% if class_name == 'normal' %}bg-success
+                                {% elif class_name == 'adenocarcinoma' %}bg-warning
+                                {% elif class_name == 'large.cell.carcinoma' %}bg-danger
+                                {% else %}bg-info{% endif %}
+                            {% else %}bg-secondary{% endif %} rounded-pill">
+                            {{ (probability * 100)|round(1) }}%
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if plot_url %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-chart-line"></i> Probability Distribution</h5>
+            </div>
+            <div class="card-body text-center">
+                <img src="data:image/png;base64,{{ plot_url }}" 
+                     alt="Prediction Chart" 
+                     class="img-fluid rounded">
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <h6><i class="fas fa-info-circle"></i> Important Medical Disclaimer</h6>
+            <p class="mb-0">
+                <strong>This AI system is for research and educational purposes only.</strong> 
+                Results should not be used for medical diagnosis without consultation with qualified healthcare professionals. 
+                Always seek professional medical advice for health concerns.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
+        <i class="fas fa-upload"></i> Analyze Another Image
+    </a>
+    <button class="btn btn-outline-secondary btn-lg ms-2" onclick="window.print()">
+        <i class="fas fa-print"></i> Print Results
+    </button>
+</div>
+{% endblock %}

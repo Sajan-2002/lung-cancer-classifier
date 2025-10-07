@@ -62,46 +62,49 @@ To replicate and run the project in Google Colab, use the following link: [Lung 
 
 ## Dependencies
 
-The project requires the following libraries:
-
+### **Core Requirements:**
 - Python 3.x
-- pandas
-- numpy
-- seaborn
-- matplotlib
-- scikit-learn
-- tensorflow
-- keras
+- TensorFlow/Keras (Deep Learning)
+- NumPy (Numerical Computing)
+- Matplotlib (Visualization)
+- PIL/Pillow (Image Processing)
+- Scikit-learn (ML Utilities)
 
-You can install the required libraries using the following command:
+### **Web Application:**
+- Flask (Web Framework)
+- Werkzeug (WSGI Utilities)
+
+### **Installation:**
 
 ```bash
-pip install pandas numpy seaborn matplotlib scikit-learn tensorflow keras
+# Install all dependencies
+pip install -r requirements.txt
+
+# Or install manually
+pip install tensorflow numpy matplotlib pillow scikit-learn flask werkzeug
 ```
 
 ## Project Structure
 
 ```
 .
-├── Lung_Cancer_Prediction.ipynb
-├── README.md
-├── dataset
-│ ├── train
-│ │ ├── adenocarcinoma_left.lower.lobe_T2_N0_M0_Ib
-│ │ ├── large.cell.carcinoma_left.hilum_T2_N2_M0_IIIa
-│ │ ├── normal
-│ │ └── squamous.cell.carcinoma_left.hilum_T1_N2_M0_IIIa
-│ ├── test
-│ │ ├── adenocarcinoma_left.lower.lobe_T2_N0_M0_Ib
-│ │ ├── large.cell.carcinoma_left.hilum_T2_N2_M0_IIIa
-│ │ ├── normal
-│ │ └── squamous.cell.carcinoma_left.hilum_T1_N2_M0_IIIa
-│ └── valid
-│ ├── adenocarcinoma_left.lower.lobe_T2_N0_M0_Ib
-│ ├── large.cell.carcinoma_left.hilum_T2_N2_M0_IIIa
-│ ├── normal
-│ └── squamous.cell.carcinoma_left.hilum_T1_N2_M0_IIIa
-└── best_model.hdf5
+├── app.py                              # Flask web application
+├── run_prediction.py                   # Interactive CLI prediction
+├── quick_test.py                       # Quick model testing
+├── requirements.txt                    # Python dependencies
+├── Lung_Cancer_Prediction.py           # Original training script
+├── Lung Cancer Pred.ipynb             # Jupyter notebook
+├── README.md                          # Project documentation
+├── FLASK_README.md                    # Web app documentation
+├── templates/                         # HTML templates
+│   ├── base.html                      # Base template
+│   ├── index.html                     # Upload page
+│   └── result.html                    # Results page
+├── dataset/                           # Training data
+│   ├── train/                         # Training images
+│   ├── test/                          # Testing images
+│   └── valid/                         # Validation images
+└── best_model.hdf5                    # Trained model weights
 ```
 
 This structure outlines the files and directories included in your project:
@@ -179,12 +182,51 @@ model.save('/content/drive/MyDrive/dataset/trained_lung_cancer_model.h5')
 
 ## Using the Model
 
-To use the trained model for predictions, follow these steps:
+### **Option 1: Web Application (Recommended)**
 
-1. **Load the Trained Model**: Load the saved `.h5` model file using TensorFlow/Keras.
-2. **Preprocess the Input Image**: Load and preprocess the input image using `image.load_img()` and `image.img_to_array()`.
-3. **Make Predictions**: Use the loaded model to predict the class of the input image.
-4. **Display Results**: Display the input image along with the predicted class label.
+Run the Flask web application for an interactive experience:
+
+```bash
+# Install Flask dependencies
+pip install Flask Werkzeug
+
+# Start the web server
+python app.py
+
+# Open browser and go to: http://localhost:5000
+```
+
+**Web Features:**
+- Drag & drop image upload
+- Real-time predictions with confidence scores
+- Interactive probability charts
+- Mobile-responsive design
+- REST API endpoints
+
+### **Option 2: Command Line Interface**
+
+For direct Python usage:
+
+```bash
+# Interactive prediction system
+python run_prediction.py
+
+# Quick single test
+python quick_test.py
+```
+
+### **Option 3: API Integration**
+
+Use the REST API for integration with other applications:
+
+```python
+import requests
+
+url = "http://localhost:5000/api/predict"
+files = {"file": open("lung_image.png", "rb")}
+response = requests.post(url, files=files)
+result = response.json()
+```
 
 ### Example Code
 
